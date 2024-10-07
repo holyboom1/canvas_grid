@@ -23,6 +23,8 @@ class SpaceObject<T> extends StatelessWidget {
     return Positioned(
       left: model.position.value.dx,
       top: model.position.value.dy,
+      width: model.childSize.width,
+      height: model.childSize.height,
       child: DeferPointer(
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
