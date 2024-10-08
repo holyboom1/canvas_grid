@@ -45,11 +45,15 @@ class SpaceCanvasController<T> {
   /// The minimum scale.
   final double minScale;
 
+  /// The callback that is called when the scale is changed.
+  final void Function(double scale)? onScaleChanged;
+
   /// Creates a new instance of [SpaceCanvasController].
   SpaceCanvasController({
     this.canvasSize = 10000000,
     this.maxScale = 3,
     this.minScale = 0.1,
+    this.onScaleChanged,
     required this.getObjects,
   }) {
     // Initialize RTree with an empty dataset
@@ -96,6 +100,7 @@ class SpaceCanvasController<T> {
     required Size windowSize,
   }) {
     screenSize.value = windowSize;
+    onScaleChanged?.call(scaleFactor.value);
     offset.value = Offset(
       windowSize.width / 2 - canvasSize / 2,
       windowSize.height / 2 - canvasSize / 2,
@@ -129,6 +134,7 @@ class SpaceCanvasController<T> {
       visibleSize.width,
       visibleSize.height,
     );
+    onScaleChanged?.call(scaleFactor.value);
     _findVisibleObjects();
   }
 
@@ -254,13 +260,11 @@ class SpaceCanvasController<T> {
   }
 
   Future<SpaceObjectModel<T>> _getNeighbors() async {
-    print('#_unassignedObjects# : ${_unassignedObjects.length}');
     if (_unassignedObjects.isNotEmpty) {
       final SpaceObjectModel<T> obj = _unassignedObjects.first;
       _unassignedObjects.remove(obj);
       return obj;
     } else {
-      print('#getObjects# : getObjects}');
       _unassignedObjects.addAll(await getObjects());
       return _getNeighbors();
     }
